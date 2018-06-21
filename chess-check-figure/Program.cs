@@ -11,15 +11,29 @@ namespace chess_check_figure
         //переменные первой фигуры
         public char figure1;
         public char letter1;
+        public int letternum1;
         public int number1;
 
         //переменные второй фигуры
         public char letter2;
+        public int letternum2;
         public int number2;
 
         // фразы для проверки
         public string checkFigure = "KQRBNp";
         public string checkLetter = "abcdefgh";
+
+        public void VarToArray()
+        {
+            number1--;
+            number2--;
+            for 
+        }
+
+        public void Check()
+        {
+
+        }
 
         public void Menu()
         {
@@ -71,8 +85,6 @@ namespace chess_check_figure
             }
             while (true)
             {
-
-
                 Console.WriteLine("Введите местоположение второй фигуры:\n" +
                                   "Например, e4");
                 string temp;
@@ -94,6 +106,7 @@ namespace chess_check_figure
 
                     number2 = int.Parse(Convert.ToString(temp[1]));
                     if (number2 < 1 || number2 > 8) throw new Exception();
+
                     if (letter1 == letter2 && number1 == number2)
                     {
                         Console.WriteLine("Данная клетка поля занята. Попробуйте снова.");
@@ -110,7 +123,6 @@ namespace chess_check_figure
                 }
             }
         }
-
     }
 
     class Program
@@ -119,6 +131,7 @@ namespace chess_check_figure
         {
             Board brd = new Board();
             brd.Menu();
+            brd.Check();
         }
     }
 }
