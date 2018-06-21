@@ -23,19 +23,72 @@ namespace chess_check_figure
         public string checkFigure = "KQRBNp";
         public string checkLetter = "abcdefgh";
 
-        public void VarToArray()
+        //массив шахматной доски (взят 9 на 9 для удобства. массив идет от 0 до 8)
+        public int[,] board = new int[9, 9];
+
+        public void CharToInt()//метод перевода символа в цифру (буквы на шахматной доске)
         {
-            number1--;
-            number2--;
-            for 
+            //первая фигура
+            if (letter1 == 'a') letternum1 = 1;
+            if (letter1 == 'b') letternum1 = 2;
+            if (letter1 == 'c') letternum1 = 3;
+            if (letter1 == 'd') letternum1 = 4;
+            if (letter1 == 'e') letternum1 = 5;
+            if (letter1 == 'f') letternum1 = 6;
+            if (letter1 == 'g') letternum1 = 7;
+            if (letter1 == 'h') letternum1 = 8;
+            //вторая фигура
+            if (letter2 == 'a') letternum2 = 1;
+            if (letter2 == 'b') letternum2 = 2;
+            if (letter2 == 'c') letternum2 = 3;
+            if (letter2 == 'd') letternum2 = 4;
+            if (letter2 == 'e') letternum2 = 5;
+            if (letter2 == 'f') letternum2 = 6;
+            if (letter2 == 'g') letternum2 = 7;
+            if (letter2 == 'h') letternum2 = 8;
+            FiguresToArray(); //вызов метода переноса переменных фигур на шахматную доску
         }
 
-        public void Check()
+        public void FiguresToArray() //метод перенос переменных фигур на шахматную доску
         {
-
+            board[letternum1, number1] = 1;
+            board[letternum2, number2] = 2;
+            Check();//вызов метода проверки
         }
 
-        public void Menu()
+        public void Check()//метод проверки
+        {
+            if (figure1 == 'p') //логика проверки для пешки
+            {
+                if ((letternum1+1<9 && number1+1<9) && board[letternum1 + 1, number1 + 1] == 2) Beat();
+                else if ((letternum1 - 1 > 0 && number1 + 1 < 9) && board[letternum1 - 1, number1 + 1] == 2) Beat();
+                else NotBeat();
+            }
+            if (figure1 == 'N') //логика проверки для коня
+            {
+                if ((letternum1 + 1 < 9 && number1 + 2 < 9) && board[letternum1 + 1, number1 + 2] == 2) Beat();
+                else if ((letternum1 + 2 < 9 && number1 + 1 < 9) && board[letternum1 + 2, number1 + 1] == 2) Beat();
+                else if ((letternum1 + 2 < 9 && number1 - 1 > 0) && board[letternum1 + 2, number1 - 1] == 2) Beat();
+                else if ((letternum1 + 1 < 9 && number1 - 2 > 0) && board[letternum1 + 1, number1 - 2] == 2) Beat();
+                else if ((letternum1 - 1 > 0 && number1 - 2 > 0) && board[letternum1 - 1, number1 - 2] == 2) Beat();
+                else if ((letternum1 - 2 > 0 && number1 - 1 > 0) && board[letternum1 - 2, number1 - 1] == 2) Beat();
+                else if ((letternum1 - 2 > 0 && number1 + 1 < 9) && board[letternum1 - 2, number1 + 1] == 2) Beat();
+                else if ((letternum1 - 1 > 0 && number1 + 2 < 9) && board[letternum1 - 1, number1 + 2] == 2) Beat();
+                else NotBeat();
+            }
+        }
+
+        public void Beat()
+        {
+            Console.WriteLine("Фигура может съесть другую");
+        }
+
+        public void NotBeat()
+        {
+            Console.WriteLine("Фигура НЕ может съесть другую");
+        }
+
+        public void Start()
         {
             while (true)
             {
@@ -122,6 +175,9 @@ namespace chess_check_figure
                     continue;
                 }
             }
+            CharToInt();//вызов метода перевода символа в цифру (буквы на шахматной доске)
+            Console.WriteLine("Начать снова? y/n");
+            if (Console.ReadLine() == "y") Start();
         }
     }
 
@@ -130,7 +186,7 @@ namespace chess_check_figure
         static void Main(string[] args)
         {
             Board brd = new Board();
-            brd.Menu();
+            brd.Start();
             brd.Check();
         }
     }
