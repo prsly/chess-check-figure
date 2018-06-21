@@ -22,11 +22,12 @@ namespace chess_check_figure
         // фразы для проверки
         public string checkFigure = "KQRBNp";
         public string checkLetter = "abcdefgh";
+        public bool checkFlag = false;
 
         //массив шахматной доски (взят 9 на 9 для удобства. массив идет от 0 до 8)
         public int[,] board = new int[9, 9];
 
-        public void CharToInt()//метод перевода символа в цифру (буквы на шахматной доске)
+        public void CharToInt() //метод перевода символа в цифру (буквы на шахматной доске)
         {
             //первая фигура
             if (letter1 == 'a') letternum1 = 1;
@@ -53,14 +54,14 @@ namespace chess_check_figure
         {
             board[letternum1, number1] = 1;
             board[letternum2, number2] = 2;
-            Check();//вызов метода проверки
+            Check(); //вызов метода проверки
         }
 
-        public void Check()//метод проверки
+        public void Check() //метод проверки
         {
             if (figure1 == 'p') //логика проверки для пешки
             {
-                if ((letternum1+1<9 && number1+1<9) && board[letternum1 + 1, number1 + 1] == 2) Beat();
+                if ((letternum1 + 1 < 9 && number1 + 1 < 9) && board[letternum1 + 1, number1 + 1] == 2) Beat();
                 else if ((letternum1 - 1 > 0 && number1 + 1 < 9) && board[letternum1 - 1, number1 + 1] == 2) Beat();
                 else NotBeat();
             }
@@ -76,14 +77,70 @@ namespace chess_check_figure
                 else if ((letternum1 - 1 > 0 && number1 + 2 < 9) && board[letternum1 - 1, number1 + 2] == 2) Beat();
                 else NotBeat();
             }
+            if (figure1 == 'B')
+            {
+                CheckBishop(); //вызов метода проверки для слона
+                if (!checkFlag) NotBeat();
+            }
+            if (figure1 == 'R')
+            {
+                CheckRook(); //вызов метода проверки для ладьи
+                if (!checkFlag) NotBeat();
+            }
+            if (figure1 == 'Q') //логика проверки для ферзя
+            {
+                CheckBishop(); //вызов метода проверки для слона
+                if (!checkFlag) CheckRook(); //вызов метода проверки для ладьи
+                if (!checkFlag) NotBeat();
+            }
+            if (figure1 == 'K') // логика проверки для короля
+            {
+                for (int i = number1-1; i<=number1+1; i++) // квадрат вокруг короля
+                    for (int j = letternum1-1; j <= letternum1 + 1; j++)
+                        if ((i < 9 && j < 9 && i > 0 && j > 0) && board[i, j] == 2) Beat();
+                if (!checkFlag) NotBeat();
+            }
         }
 
-        public void Beat()
+        public void CheckBishop() // метод проверки для слона
+        {
+            for (int i = letternum1 + 1, j = number1 + 1; i < 9; i++) // по диагонали справа вверх от фигуры
+            { 
+                if ((i < 9 && j < 9) && board[i, j] == 2) Beat();
+                j++;
+            }
+            for (int i = letternum1 + 1, j = number1 - 1; i < 9; i++) //по диагонали справа вниз от фигуры
+            {
+                if ((i < 9 && j > 0) && board[i, j] == 2) Beat();
+                j--;
+            }
+            for (int i = letternum1 - 1, j = number1 + 1; i > 0; i--) //по диагонали слева вверх от фигуры
+            {
+                if ((i > 0 && j < 9) && board[i, j] == 2) Beat();
+                j++;
+            }
+            for (int i = letternum1 - 1, j = number1 - 1; i > 0; i--) //по диагонали слева вниз от фигуры
+            {
+                if ((i > 0 && j > 0) && board[i, j] == 2) Beat();
+                j--;
+            }
+        }
+
+        public void CheckRook()
+        {
+            for (int i = 1; i < 9; i++) // проверка по горизонтали
+                if (board[i, number1] == 2) Beat();
+            for (int i = 1; i < 9; i++) // проверка по вертикали
+                if (board[letternum1, i] == 2) Beat();
+        }
+
+        public void Beat() // найдена фигура
         {
             Console.WriteLine("Фигура может съесть другую");
+            checkFlag = true;
         }
 
-        public void NotBeat()
+        public void NotBeat() // не найдена фигура
         {
             Console.WriteLine("Фигура НЕ может съесть другую");
         }
@@ -105,10 +162,8 @@ namespace chess_check_figure
                 {
                     temp = Console.ReadLine();
                     if (temp == "0") break; // выход из программы
-                    if (temp.Length != 3) //проверка длины введенной строки
-                    {
+                    if (temp.Length != 3) // проверка длины введенной строки
                         throw new Exception(); // если неравно 3 -> запустить исключение (отправляем в catch)
-                    }
 
                     figure1 = temp[0];
                     bool cF = false;
@@ -145,10 +200,8 @@ namespace chess_check_figure
                 {
                     temp = Console.ReadLine();
                     if (temp == "0") break; // выход из программы
-                    if (temp.Length != 2) //проверка длины введенной строки
-                    {
+                    if (temp.Length != 2) // проверка длины введенной строки
                         throw new Exception(); // если неравно 2 -> запустить исключение (отправляем в catch)
-                    }
 
                     letter2 = temp[0];
                     bool cL = false;
@@ -175,9 +228,7 @@ namespace chess_check_figure
                     continue;
                 }
             }
-            CharToInt();//вызов метода перевода символа в цифру (буквы на шахматной доске)
-            Console.WriteLine("Начать снова? y/n");
-            if (Console.ReadLine() == "y") Start();
+            CharToInt();// вызов метода перевода символа в цифру (буквы на шахматной доске)
         }
     }
 
@@ -185,9 +236,13 @@ namespace chess_check_figure
     {
         static void Main(string[] args)
         {
-            Board brd = new Board();
-            brd.Start();
-            brd.Check();
+            while (true) // цикл помогает начать снова, так как переменные обнуляются
+            {
+                Board brd = new Board(); // создаем "доску"
+                brd.Start(); // запускаем меню
+                Console.WriteLine("Начать снова? y/n");
+                if (Console.ReadLine() == "n") break; // при нажатии 'n' цикл заканчивается
+            }
         }
     }
 }
